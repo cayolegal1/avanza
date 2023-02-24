@@ -1,6 +1,3 @@
-const persona = require('./models/persona');
-
-
 /*libraries*/
   const cors = require('cors');
   const express = require('express');

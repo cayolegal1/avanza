@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const moment = require('moment');
 const reserva = require('../models/reserva');
-const reservaValidator = require('../middlewares/validators');
+const {reservaValidator} = require('../middlewares/validators');
 
 router.get('/reservas', async (req, res, next) => {
     try {
@@ -12,7 +12,6 @@ router.get('/reservas', async (req, res, next) => {
       next(error);
     }
   });
-
 
   router.post('/reserva/new', async (req, res, next) => {
     try {
@@ -55,7 +54,7 @@ router.get('/reservas', async (req, res, next) => {
         reserva.destroy(response)
         res.send("deleted");
       }
-      else throw new Error('The user dont exists')
+      else throw new Error('The item dont exists')
     } catch (error) {
       next(error);
     }
@@ -65,12 +64,13 @@ router.get('/reservas', async (req, res, next) => {
       try {
         const body = req.body;
         const { id } = req.params;
+        reservaValidator(fechaentradaDate, fechasalidaDate);
         const reserva_data = await reserva.findByPk(id);
         if(reserva_data) {
           await reserva_data.update(body)
           res.send(body)
         }
-        else throw new Error('The user dont exists')
+        else throw new Error('The item doesnt exists')
       } catch (error) {
         next(error);
       }

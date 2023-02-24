@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const {habitacionValidator} = require('../middlewares/validators');
 const habitacion = require('../models/habitacion')
 
 router.get('/habitaciones', async (req, res, next) => {
@@ -11,14 +12,15 @@ router.get('/habitaciones', async (req, res, next) => {
     }
   });
 
-
   router.post('/habitacion/new', async (req, res, next) => {
     try {
       const {body} = req;
+      habitacionValidator(body.habitacionpiso, body.habitacionnro, body.cantcamas);
       const products = await habitacion.create(body);
       res.json(products);
     } catch (error) {
       next(error);
+      console.log('ERROR ===>', error.message)
     }
   });
 
@@ -50,12 +52,16 @@ router.get('/habitaciones', async (req, res, next) => {
       try {
         const body = req.body;
         const { id } = req.params;
+        habitacionValidator(
+          body.habitacionpiso,
+          body.habitacionnro,
+          body.cantcamas
+        );
         const habitacion_data = await habitacion.findByPk(id);
-        if(habitacion_data) {
-          await habitacion_data.update(body)
-          res.send(body)
-        }
-        else throw new Error('The user dont exists')
+        if (habitacion_data) {
+          await habitacion_data.update(body);
+          res.send(body);
+        } else throw new Error("The room doesnt exists");
       } catch (error) {
         next(error);
       }
