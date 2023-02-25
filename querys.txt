@@ -1,0 +1,11 @@
+ALTER TABLE habitacion 
+ADD CONSTRAINT habitacionpiso_val 
+CHECK(habitacionpiso>0 and habitacionpiso <=10);
+
+ALTER TABLE habitacion 
+ADD CONSTRAINT habitacionnro_val
+CHECK(habitacionnro >0 and habitacionnro<=20);
+
+ALTER TABLE habitacion 
+ADD CONSTRAINT cantcamas_val
+CHECK(cantcamas>0 and cantcamas <=4);

@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 
 /*cors config*/
-  const whitelist = ['http://localhost:8080', 'https://myapp.co'];
+  const whitelist = ['http://localhost:8080', 'https://myapp.co', 'http://localhost:5173'];
   const options = {
     origin: (origin, callback) => {
       if (whitelist.includes(origin) || !origin) {
@@ -28,7 +28,7 @@ app.use(express.json());
 router(app);
 app.use(morgan('dev'));
 
-app.listen(4000, () => {
+app.listen(8000, () => {
     sequelize.sync({force: false}).then(() => {
         console.log('Connection established')
     })
