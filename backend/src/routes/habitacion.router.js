@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {habitacionValidator} = require('../middlewares/validators');
 const habitacion = require('../models/habitacion')
+const reserva = require('../models/reserva');
 
 router.get('/habitaciones', async (req, res, next) => {
     try {
@@ -20,7 +21,6 @@ router.get('/habitaciones', async (req, res, next) => {
       res.json(products);
     } catch (error) {
       next(error);
-      console.log('ERROR ===>', error.message)
     }
   });
 
@@ -37,14 +37,13 @@ router.get('/habitaciones', async (req, res, next) => {
   router.delete("/habitacion/:id", async (req, res, next) => {
     try {
       const { id } = req.params;
-      const response = await habitacion.findByPk(id);
-      if(response) {
-        habitacion.destroy(response)
-        res.send("deleted");
-      }
-      else throw new Error('The user dont exists')
+    await habitacion.findByPk(id);
+    await reserva.destroy({where: {habitacionid: id}})
+    await habitacion.destroy({ where: { id } });
+    res.send('ok')
     } catch (error) {
       next(error);
+      console.log('error ==>', error.message)
     }
   });
   

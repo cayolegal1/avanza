@@ -55,14 +55,14 @@ const {sequelize} = require('../db');
         ]
       },
       {
-        name: "fk_habitacion",
+        name: "fk_habitacionid",
         using: "BTREE",
         fields: [
           { name: "habitacionid" },
         ]
       },
       {
-        name: "fk_persona",
+        name: "fk_personaid",
         using: "BTREE",
         fields: [
           { name: "personaid" },

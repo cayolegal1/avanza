@@ -123,7 +123,6 @@ export const PeoplePage = () => {
     console.log(selectedPerson.id)
     Services.deletePerson(selectedPerson.id).then(res => {
         handleCloseDeleteModal();
-        setOpenModal(false);
         Toast.fire({
             icon: "success",
             title: "Persona eliminada!",

@@ -31,7 +31,7 @@ router(app);
 app.use(morgan('dev'));
 
 app.listen(8000, () => {
-    sequelize.sync({force: true}).then(() => {
+    sequelize.sync({force: false}).then(() => {
         console.log('Connection established')
     })
     dbConnectMysql()

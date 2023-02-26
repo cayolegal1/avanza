@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const persona = require("../models/persona");
+const reserva = require('../models/reserva');
 
 router.get("/personas", async (req, res, next) => {
   try {
@@ -34,14 +35,11 @@ router.get("/persona/:id", async (req, res, next) => {
 router.delete("/persona/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const response = await persona.findByPk(id);
-    if(response) {
-      persona.destroy({
-        where: {id},
-      })
-      res.send("deleted");
-    }
-    else throw new Error('The user dont exists')
+    await persona.findByPk(id);
+    await reserva.destroy({where: {personaid: id}})
+    await persona.destroy({where: {id}});
+    res.send('ok')
+    
   } catch (error) {
     next(error);
   }

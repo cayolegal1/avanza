@@ -14,6 +14,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 // Components
 import {BaseTable} from '../../components/Table';
 import { BaseModal } from '../../components/BaseModal';
+import { DeleteModal } from '../../components/DeleteModal';
 
 // Utils
 import {Services} from '../../services/api';
@@ -34,6 +35,7 @@ const dataTableData = {
 export const RoomsPage = () => {
   const [data, setData] = useState(dataTableData);
   const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
   const formik = useFormik({
@@ -82,6 +84,7 @@ export const RoomsPage = () => {
               <Button
                 variant="contained"
                 sx={{ background: "red", "&:hover": { background: "#e80b0b" } }}
+                onClick={() => handleDeleteOpen(r)}
               >
                 <DeleteOutlineOutlinedIcon />
               </Button>
@@ -109,6 +112,16 @@ export const RoomsPage = () => {
     formik.resetForm();
   }
 
+  const handleDeleteOpen = (room) => {
+    setOpenDeleteModal(true);
+    setSelectedRoom(room)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedRoom(null);
+  }
+
   const editRoom = () => {
     const updatedData = {...formik.values, id: selectedRoom.id};
     Services.updateRoom(updatedData).then((res) => {
@@ -119,6 +132,17 @@ export const RoomsPage = () => {
         Toast.fire({ icon: "success", title: "Habitacion actualizada!" });
       })
       .catch((error) => Toast.fire({ icon: "warning", title: error.message }));
+  }
+
+  const deleteRoom = () => {
+    Services.deleteRoom(selectedRoom.id).then(res => {
+        handleCloseDeleteModal();
+        Toast.fire({
+            icon: "success",
+            title: "Habitacion eliminada!",
+        });
+        getRooms();
+    }).catch((error) => Toast.fire({ icon: "warning", title: error.message}));
   }
 
   useEffect(() => {
@@ -200,6 +224,7 @@ export const RoomsPage = () => {
           </Select>
         </FormControl>
       </BaseModal>
+      <DeleteModal open={openDeleteModal} onClose={handleCloseDeleteModal} onDelete={deleteRoom} />
     </Box>
   );
 }

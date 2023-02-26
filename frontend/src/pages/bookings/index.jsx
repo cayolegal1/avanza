@@ -15,6 +15,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 // Components
 import {BaseTable} from '../../components/Table';
 import { BaseModal } from '../../components/BaseModal';
+import { DeleteModal } from '../../components/DeleteModal';
 
 // Utils
 import {Services} from '../../services/api';
@@ -36,6 +37,7 @@ const dataTableData = {
 export const BookingsPage = () => {
   const [data, setData] = useState(dataTableData);
   const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showApologizeMessage, setShowApologizeMessage] = useState(false);
   const [people, setPeople] = useState([]);
@@ -75,7 +77,7 @@ export const BookingsPage = () => {
           setOpenModal(false);
           Toast.fire({
             icon: "success",
-            title: "Reserca creada!",
+            title: "Reserva creada!",
           });
         })
         .catch((error) =>{
@@ -103,6 +105,7 @@ export const BookingsPage = () => {
         <Button
           variant="contained"
           sx={{ background: "red", "&:hover": { background: "#e80b0b" } }}
+          onClick={() => handleDeleteOpen(d)}
         >
           <DeleteOutlineOutlinedIcon />
         </Button>
@@ -134,8 +137,8 @@ export const BookingsPage = () => {
 
   const getPeople = () => {
     return Services.getAllPeople().then(response => {
-      const response_data = response.data.map((r) => ({id: r.id, nombrecompleto: r.nombrecompleto}))
-      setPeople(response_data)
+      const response_data = response.data.map((r) => ({id: r.id, nombrecompleto: r.nombrecompleto}));
+      setPeople(response_data);
     }).catch((error) => Toast.fire({icon: 'warning', title: error.message}))
   }
 
@@ -158,6 +161,16 @@ export const BookingsPage = () => {
     setSelectedBooking(selected);
   }
 
+  const handleDeleteOpen = (booking) => {
+    setOpenDeleteModal(true);
+    setSelectedRoom(booking)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedRoom(null);
+  }
+
   const editBooking = () => {
     const updated_data = {
       ...formik.values,
@@ -170,6 +183,18 @@ export const BookingsPage = () => {
       getBookings();
       Toast.fire({ icon: "success", title: "Reserva actualizada!" });
     }).catch((error) => Toast.fire({ icon: "warning", title: error.message }));
+  }
+
+  const deleteBooking = () => {
+    Services.deleteBooking(selectedRoom.id).then(res => {
+        handleCloseDeleteModal();
+        setOpenModal(false);
+        Toast.fire({
+            icon: "success",
+            title: "Reserva eliminada!",
+        });
+        getRooms();
+    }).catch((error) => Toast.fire({ icon: "warning", title: error.message}));
   }
 
   const filterAvailableRooms = () => {
@@ -319,10 +344,16 @@ export const BookingsPage = () => {
         </FormControl>
         {showApologizeMessage && (
           <Typography variant="button">
-            Lo sentimos, no contamos con habitaciones disponibles en las fechas seleccionadas
+            Lo sentimos, no contamos con habitaciones disponibles en las fechas
+            seleccionadas
           </Typography>
         )}
       </BaseModal>
+      <DeleteModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDelete={deleteBooking}
+      />
     </Box>
   );
 }
