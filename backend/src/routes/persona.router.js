@@ -36,7 +36,9 @@ router.delete("/persona/:id", async (req, res, next) => {
     const { id } = req.params;
     const response = await persona.findByPk(id);
     if(response) {
-      persona.destroy(response)
+      persona.destroy({
+        where: {id},
+      })
       res.send("deleted");
     }
     else throw new Error('The user dont exists')

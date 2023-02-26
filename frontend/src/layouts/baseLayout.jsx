@@ -1,51 +1,42 @@
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { BasePerson, BaseRoom, BaseBooking, DataTableData } from '../pages/types';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
+import {NavLink} from 'react-router-dom';
 
+const pages = [
+  {title: 'Personas', to: '/people'},
+  {title: 'Habitaciones', to: '/rooms'},
+  {title: 'Reservas', to: '/bookings'},
+];
 
-// type LayoutProps = {
-//   data: DataTableData
-// }
-
-export const BaseLayout = ({data}) => {
+export const BaseLayout = ({children}) => {
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableBody>
-          <TableRow>
-            {data.columns.map((k, key) => (
-              <TableCell key={`${key}_label_${k}`}>
-                {k.Header}
-              </TableCell>
-            ))}
-          </TableRow>
-          {(!data.rows || !data.rows[0])
-            ? <TableRow className="t_body_tr">
-                <TableCell>Not found data</TableCell>
-              </TableRow>
-            : data.rows.map((row, i) => (
-              <TableRow
-                key={i}
-                className="t_body_tr_default"
-              >
-                {data.columns.map((k, ii) => {
-                  console.log(row[k.accesor])
-                  return (
-                    <TableCell key={`${i}_${ii}`}>
-                        {/* @ts-ignore */}
-                        {JSON.stringify(row)}
-                    </TableCell>
-                  )
-                })}
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  )
+    <Box>
+      <AppBar position="static">
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Box sx={{ flexGrow: 1, display: "flex" }}>
+              {pages.map((page) => (
+                <Button key={page.title} sx={{ my: 2, display: "block" }}>
+                  <NavLink
+                    to={page.to}
+                    style={({ isActive }) => ({
+                      color: "white",
+                      textDecoration: isActive ? "underline" : "none",
+                      fontWeight: isActive ? "bold" : "light",
+                    })}
+                  >
+                    {page.title}
+                  </NavLink>
+                </Button>
+              ))}
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      {children}
+    </Box>
+  );
 }

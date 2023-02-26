@@ -34,6 +34,7 @@ export interface BaseBooking {
     fechasalida: string | Date,
     habitacionid: number,
     personaid: number,
+    montoreserva: number,
 }
 
 export type Booking = Omit<BaseBooking, 'id'>

@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
 const moment = require('moment');
-const reserva = require('../models/reserva');
+const express = require('express');
 const {reservaValidator} = require('../middlewares/validators');
+const router = express.Router();
+const reserva = require('../models/reserva');
 
 router.get('/reservas', async (req, res, next) => {
     try {
@@ -16,18 +16,16 @@ router.get('/reservas', async (req, res, next) => {
   router.post('/reserva/new', async (req, res, next) => {
     try {
       const {body} = req;
-      const {fechaentrada, fechasalida, fechareserva} = body;
-      const fechareservaDate = new Date(fechareserva);
-      const fechaentradaDate = new Date(fechaentrada);
-      const fechasalidaDate = new Date(fechasalida);
-      reservaValidator(fechaentradaDate, fechasalidaDate);
-
+      const {fechaentrada, fechasalida, fechareserva, habitacionid} = body;
+      const bookings = await reserva.findAll()
+      reservaValidator(new Date(fechaentrada), new Date(fechasalida), new Date(fechareserva), bookings, habitacionid);
+      
       const reserva_data = {
         ...body, 
-        fechaentrada: `${fechaentradaDate.getFullYear()}-${fechaentradaDate.getMonth()}-${fechaentradaDate.getDate()}`,
-        fechareserva: `${fechareservaDate.getFullYear()}-${fechareservaDate.getMonth()}-${fechareservaDate.getDate()}`,
-        fechasalida: `${fechasalidaDate.getFullYear()}-${fechasalidaDate.getMonth()}-${fechasalidaDate.getDate()}`,
-        montoreserva: moment(fechasalidaDate).diff(fechaentradaDate, 'days') * 120000
+        fechaentrada: moment(fechaentrada).format('YYYY/MM/DD'),
+        fechareserva:moment(fechareserva).format('YYYY/MM/DD'),
+        fechasalida: moment(fechasalida).format('YYYY/MM/DD'),
+        montoreserva: moment(new Date(fechasalida)).diff(new Date(fechaentrada), 'days') * 120000
       }
       const response = await reserva.create(reserva_data);
       res.send(response);
@@ -64,7 +62,10 @@ router.get('/reservas', async (req, res, next) => {
       try {
         const body = req.body;
         const { id } = req.params;
-        reservaValidator(fechaentradaDate, fechasalidaDate);
+        const {fechaentrada, fechasalida, fechareserva, habitacionid} = body;
+        const bookings = await reserva.findAll();
+        reservaValidator(fechaentrada, fechasalida, fechareserva, bookings, habitacionid);
+
         const reserva_data = await reserva.findByPk(id);
         if(reserva_data) {
           await reserva_data.update(body)

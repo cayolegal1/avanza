@@ -1,8 +1,32 @@
 const moment = require('moment');
 
-const reservaValidator = (initialDate, endDate) => {
+const reservaValidator = (initialDate, endDate, bookingDate, bookings, roomId) => {
+    if(moment(bookingDate).isSame(new Date(), 'day'), moment(initialDate).isBefore(new Date(), 'day')) {
+        throw new Error('Booking date must be greater than current day');
+    }
+    if(moment(initialDate).isSame(new Date(), 'day' || moment(initialDate).isBefore(new Date(), 'day'))) {
+      throw new Error('Initial date must be greater than current day');
+    }
     if(moment(endDate).diff(initialDate) < 1) throw new Error('End date must be greather than initial date');
-    if(moment().diff(initialDate) < 1) throw new Error('Booking date must be greater than current day');
+    for(let booking of bookings) {
+        if(
+          (moment(initialDate).isBetween(
+            booking.fechaentrada,
+            booking.fechasalida,
+            null,
+            "[]"
+          ) ||
+          moment(endDate).isBetween(
+            booking.fechaentrada,
+            booking.fechasalida,
+            null,
+            "[]"
+          )) 
+          && roomId === booking.habitacionid
+        ) {
+          throw new Error(`The room ${booking.habitacionid} is not available in these dates`)
+        } 
+   }
 }
 
 const habitacionValidator = (habitacionpiso, habitacionnro, cantcamas) => {

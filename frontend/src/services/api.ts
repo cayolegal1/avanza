@@ -1,9 +1,9 @@
-import axios, { Axios, AxiosInstance, AxiosResponse } from 'axios';
-import {BasePerson, Person, BaseRoom, Room, BaseBooking, Booking} from '../pages/types';
+import axios, {AxiosInstance, AxiosResponse } from 'axios';
+import {BasePerson, Person, BaseRoom, Room, BaseBooking, Booking} from './types';
 
 class ApiServices {
 
-    private api: AxiosInstance = axios.create({
+    private readonly api: AxiosInstance = axios.create({
         baseURL: 'http://localhost:8000/api/v1',
         headers: {
             Accept: 'application/json',

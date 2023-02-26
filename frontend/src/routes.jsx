@@ -1,4 +1,3 @@
-// Pages
 import {PeoplePage} from "./pages/people";
 import {RoomsPage} from "./pages/rooms";
 import {BookingsPage} from "./pages/bookings";

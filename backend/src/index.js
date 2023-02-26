@@ -11,15 +11,17 @@ const app = express();
 app.use(express.json());
 
 /*cors config*/
-  const whitelist = ['http://localhost:8080', 'https://myapp.co', 'http://localhost:5173'];
   const options = {
-    origin: (origin, callback) => {
-      if (whitelist.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('no permitido'));
-      }
-    }
+    origin: '*',
+    methods: [
+      'GET',
+      'POST',
+      'DELETE',
+      'PATCH',
+    ],
+    allowedHeaders: [
+      'Content-Type',
+    ],
   }
   
   app.use(cors(options))
@@ -29,7 +31,7 @@ router(app);
 app.use(morgan('dev'));
 
 app.listen(8000, () => {
-    sequelize.sync({force: false}).then(() => {
+    sequelize.sync({force: true}).then(() => {
         console.log('Connection established')
     })
     dbConnectMysql()

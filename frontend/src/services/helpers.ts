@@ -1,4 +1,5 @@
 import * as Swal from "sweetalert2";
+
 const Toast = (Swal as any).mixin({
   toast: true,
   position: 'top-end',
@@ -10,5 +11,7 @@ const Toast = (Swal as any).mixin({
     toast.addEventListener('mouseleave', (Swal as any).resumeTimer)
   }
 })
+
+export const pxToRem = (value: number) => `${value / 16}rem`  
 
 export default Toast
