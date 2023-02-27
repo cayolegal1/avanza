@@ -47,9 +47,9 @@ export const RoomsPage = () => {
       tienefrigobar: selectedRoom ? selectedRoom.tienefrigobar : false,
     },
     validationSchema: Yup.object().shape({
-        habitacionpiso: Yup.number().min(1).max(10).required(),
-        habitacionnro: Yup.number().min(1).max(20).required(),
-        cantcamas: Yup.number().min(1).max(4).required(),
+        habitacionpiso: Yup.number().min(1, 'El valor debe ser mayor o igual a 1').max(10, 'El valor debe ser menor o igual a 10').required('Campo requerido'),
+        habitacionnro: Yup.number().min(1, 'El valor debe ser mayor o igual a 1').max(20, 'El valor debe ser menor o igual a 20').required('Campo requerido'),
+        cantcamas: Yup.number().min(1, 'El valor debe ser mayor o igual a 1').max(4, 'El valor debe ser menor o igual a 4').required('Campo requerido'),
         tienetelevision: Yup.boolean(),
         tienefrigobar: Yup.boolean(),
     }),
@@ -174,9 +174,9 @@ export const RoomsPage = () => {
           label="Habitacion Piso"
           name="habitacionpiso"
           onChange={formik.handleChange}
-          error={formik.errors.habitacionpiso}
+          error={formik.touched.habitacionpiso && formik.errors.habitacionpiso}
           value={formik.values.habitacionpiso}
-          helperText={formik.errors.habitacionpiso}
+          helperText={formik.touched.habitacionpiso && formik.errors.habitacionpiso}
           variant="outlined"
         />
         <TextField
@@ -184,9 +184,9 @@ export const RoomsPage = () => {
           label="Habitacion Número"
           name="habitacionnro"
           onChange={formik.handleChange}
-          error={formik.errors.habitacionnro}
+          error={formik.touched.habitacionnro && formik.errors.habitacionnro}
           value={formik.values.habitacionnro}
-          helperText={formik.errors.habitacionnro}
+          helperText={formik.touched.habitacionnro && formik.errors.habitacionnro}
           variant="outlined"
         />
         <TextField
@@ -194,9 +194,9 @@ export const RoomsPage = () => {
           label="Cantidad Camas"
           name="cantcamas"
           onChange={formik.handleChange}
-          error={formik.errors.cantcamas}
+          error={formik.touched.cantcamas && formik.errors.cantcamas}
           value={formik.values.cantcamas}
-          helperText={formik.errors.cantcamas}
+          helperText={formik.touched.cantcamas && formik.errors.cantcamas}
           variant="outlined"
         />
         <FormControl fullWidth>

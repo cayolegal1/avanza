@@ -1,5 +1,5 @@
 const SequelizeAuto = require('sequelize-auto');
-const entitiesFromDB = new SequelizeAuto('my_store', 'root', 'admin123', {
+const entitiesFromDB = new SequelizeAuto('reservas', 'root', 'admin123', {
     host: 'localhost', 
     dialect: 'mysql',
     directory: './models',

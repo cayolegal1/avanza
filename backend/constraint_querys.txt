@@ -1,3 +1,5 @@
+#Querys to validate the habitacion data in the database, if it is desired
+
 ALTER TABLE habitacion 
 ADD CONSTRAINT habitacionpiso_val 
 CHECK(habitacionpiso>0 and habitacionpiso <=10);

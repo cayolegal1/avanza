@@ -44,10 +44,10 @@ export const PeoplePage = () => {
       telefono: selectedPerson ? selectedPerson.telefono : "",
     },
     validationSchema: Yup.object().shape({
-        nombrecompleto: Yup.string().required(),
-        nrodocumento: Yup.string().required(),
-        correo: Yup.string().email().required(),
-        telefono: Yup.string().required(),
+        nombrecompleto: Yup.string().required('Campo requerido'),
+        nrodocumento: Yup.string().required('Campo requerido'),
+        correo: Yup.string().email('Email no válido').required('Campo requerido'),
+        telefono: Yup.string().required('Campo requerido'),
     }),
     onSubmit: (values) => {
         Services.createPerson(values)
@@ -156,9 +156,9 @@ export const PeoplePage = () => {
           label='Nombre completo'
           name='nombrecompleto'
           onChange={formik.handleChange}
-          error={formik.errors.nombrecompleto}
+          error={formik.errors.nombrecompleto && formik.touched.nombrecompleto}
           value={formik.values.nombrecompleto}
-          helperText={formik.errors.nombrecompleto}
+          helperText={formik.touched.nombrecompleto && formik.errors.nombrecompleto}
           variant='outlined'
         />
         <TextField 
@@ -166,9 +166,9 @@ export const PeoplePage = () => {
           label='Número de documento'
           name='nrodocumento'
           onChange={formik.handleChange}
-          error={formik.errors.nrodocumento}
+          error={formik.errors.nrodocumento && formik.touched.nrodocumento}
           value={formik.values.nrodocumento}
-          helperText={formik.errors.nrodocumento}
+          helperText={formik.touched.nrodocumento && formik.errors.nrodocumento}
           variant='outlined'
         />
         <TextField 
@@ -176,9 +176,9 @@ export const PeoplePage = () => {
           label='Correo'
           name='correo'
           onChange={formik.handleChange}
-          error={formik.errors.correo}
+          error={formik.errors.correo && formik.touched.correo}
           value={formik.values.correo}
-          helperText={formik.errors.correo}
+          helperText={formik.touched.correo && formik.errors.correo}
           variant='outlined'
         />
         <TextField 
@@ -186,9 +186,9 @@ export const PeoplePage = () => {
           label='Teléfono'
           name='telefono'
           onChange={formik.handleChange}
-          error={formik.errors.telefono}
+          error={formik.errors.telefono && formik.touched.telefono}
           value={formik.values.telefono}
-          helperText={formik.errors.telefono}
+          helperText={formik.touched.telefono && formik.errors.telefono}
           variant='outlined'
         />
       </BaseModal>

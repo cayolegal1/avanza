@@ -1,7 +1,6 @@
-const {DataTypes, Sequelize} = require('sequelize');
-const {sequelize} = require('../db');
-
-  const reserva = sequelize.define('reserva', {
+const Sequelize = require('sequelize');
+module.exports = function(sequelize, DataTypes) {
+  return sequelize.define('reserva', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -11,7 +10,7 @@ const {sequelize} = require('../db');
     fechareserva: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
     fechaentrada: {
       type: DataTypes.DATE,
@@ -70,5 +69,4 @@ const {sequelize} = require('../db');
       },
     ]
   });
-
-  module.exports = reserva;
+};

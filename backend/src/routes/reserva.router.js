@@ -2,11 +2,11 @@ const moment = require('moment');
 const express = require('express');
 const {reservaValidator} = require('../middlewares/validators');
 const router = express.Router();
-const reserva = require('../models/reserva');
+const {models} = require('../models/init-models');
 
 router.get('/reservas', async (req, res, next) => {
     try {
-      const products = await reserva.findAll();
+      const products = await models.reserva.findAll();
       res.send(products);
     } catch (error) {
       next(error);
@@ -17,17 +17,23 @@ router.get('/reservas', async (req, res, next) => {
     try {
       const {body} = req;
       const {fechaentrada, fechasalida, fechareserva, habitacionid} = body;
-      const bookings = await reserva.findAll()
-      reservaValidator(new Date(fechaentrada), new Date(fechasalida), new Date(fechareserva), bookings, habitacionid);
+      const bookings = await models.reserva.findAll()
+      reservaValidator(
+        fechaentrada,
+        fechasalida,
+        fechareserva,
+        bookings,
+        habitacionid
+      );
       
       const reserva_data = {
         ...body, 
         fechaentrada: moment(fechaentrada).format('YYYY/MM/DD'),
         fechareserva:moment(fechareserva).format('YYYY/MM/DD'),
         fechasalida: moment(fechasalida).format('YYYY/MM/DD'),
-        montoreserva: moment(new Date(fechasalida)).diff(new Date(fechaentrada), 'days') * 120000
+        montoreserva: moment(fechasalida).diff(fechaentrada, 'days') * 120000
       }
-      const response = await reserva.create(reserva_data);
+      const response = await models.reserva.create(reserva_data);
       res.send(response);
     } catch (error) {
       next(error);
@@ -37,7 +43,7 @@ router.get('/reservas', async (req, res, next) => {
   router.get("/reserva/:id", async (req, res, next) => {
     try {
       const { id } = req.params;
-      const response = await reserva.findByPk(id);
+      const response = await models.reserva.findByPk(id);
       res.json(response);
     } catch (error) {
       next(error);
@@ -47,9 +53,9 @@ router.get('/reservas', async (req, res, next) => {
   router.delete("/reserva/:id", async (req, res, next) => {
     try {
       const { id } = req.params;
-      const response = await reserva.findByPk(id);
+      const response = await models.reserva.findByPk(id);
       if(response) {
-        reserva.destroy(response)
+        models.reserva.destroy({where: {id}})
         res.send("deleted");
       }
       else throw new Error('The item dont exists')
@@ -63,12 +69,24 @@ router.get('/reservas', async (req, res, next) => {
         const body = req.body;
         const { id } = req.params;
         const {fechaentrada, fechasalida, fechareserva, habitacionid} = body;
-        const bookings = await reserva.findAll();
-        reservaValidator(fechaentrada, fechasalida, fechareserva, bookings, habitacionid);
-
-        const reserva_data = await reserva.findByPk(id);
+        const bookings = await models.reserva.findAll();
+        reservaValidator(
+          fechaentrada,
+          fechasalida,
+          fechareserva,
+          bookings,
+          habitacionid
+        );
+        const reserva_data = await models.reserva.findByPk(id);
         if(reserva_data) {
-          await reserva_data.update(body)
+          const body_data = {
+            ...body, 
+            fechaentrada: moment(fechaentrada).format('YYYY/MM/DD'),
+            fechareserva:moment(fechareserva).format('YYYY/MM/DD'),
+            fechasalida: moment(fechasalida).format('YYYY/MM/DD'),
+            montoreserva: moment(fechasalida).diff(fechaentrada, 'days') * 120000
+          }
+          await reserva_data.update(body_data)
           res.send(body)
         }
         else throw new Error('The item doesnt exists')

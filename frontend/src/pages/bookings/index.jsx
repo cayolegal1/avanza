@@ -58,15 +58,15 @@ export const BookingsPage = () => {
           moment().add(1, "day").format("YYYY/MM/DD"),
           "La fecha de reserva debe ser mayor al día actual"
         )
-        .required(),
+        .required('Campo requerido'),
       fechaentrada: Yup.date()
         .min(moment().add(2, "day").format("YYYY/MM/DD"), 'La fecha de entrada debe ser mayor al día de reserva')
-        .required(),
+        .required('Campo requerido'),
       fechasalida: Yup.date()
         .min(moment().add(2, "day").format("YYYY/MM/DD"), 'La fecha de salida debe ser mayor o igual al día de entrada')
-        .required(),
-      habitacionId: Yup.number(),
-      personaId: Yup.number(),
+        .required('Campo requerido'),
+      habitacionid: Yup.number().required('Campo requerido'),
+      personaid: Yup.number().required('Campo requerido'),
     }),
     onSubmit: (values) => {
     
@@ -151,6 +151,7 @@ export const BookingsPage = () => {
   }
 
   const handleEditOpen = (booking) => {
+    setShowApologizeMessage(false);
     setOpenModal(true);
     const selected = {
       ...booking,
@@ -163,12 +164,12 @@ export const BookingsPage = () => {
 
   const handleDeleteOpen = (booking) => {
     setOpenDeleteModal(true);
-    setSelectedRoom(booking)
+    setSelectedBooking(booking)
   }
 
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
-    setSelectedRoom(null);
+    setSelectedBooking(null);
   }
 
   const editBooking = () => {
@@ -186,14 +187,14 @@ export const BookingsPage = () => {
   }
 
   const deleteBooking = () => {
-    Services.deleteBooking(selectedRoom.id).then(res => {
+    console.log(selectedBooking)
+    Services.deleteBooking(selectedBooking.id).then(res => {
         handleCloseDeleteModal();
-        setOpenModal(false);
         Toast.fire({
             icon: "success",
             title: "Reserva eliminada!",
         });
-        getRooms();
+        getBookings();
     }).catch((error) => Toast.fire({ icon: "warning", title: error.message}));
   }
 
@@ -215,8 +216,10 @@ export const BookingsPage = () => {
           "[]"
         )
       ) {
-        roomsNotAvailable += 1;
-        setRooms((prev) => prev.filter((p) => p !== booking.habitacionid));
+        if(booking.id !== selectedBooking?.id) {
+          roomsNotAvailable += 1;
+          setRooms((prev) => prev.filter((p) => p !== booking.habitacionid));
+        }
       } 
     }
     if(roomsNotAvailable === 0) {
@@ -266,7 +269,7 @@ export const BookingsPage = () => {
             name="fechareserva"
             onChange={formik.handleChange}
             error={
-              formik.errors.fechareserva !== undefined &&
+              formik.errors.fechareserva  &&
               formik.touched.fechareserva
             }
             value={formik.values.fechareserva}
@@ -283,7 +286,7 @@ export const BookingsPage = () => {
             name="fechaentrada"
             onChange={formik.handleChange}
             error={
-              formik.errors.fechaentrada !== undefined &&
+              formik.errors.fechaentrada  &&
               formik.touched.fechaentrada
             }
             value={formik.values.fechaentrada}
@@ -300,7 +303,7 @@ export const BookingsPage = () => {
             name="fechasalida"
             onChange={formik.handleChange}
             error={
-              formik.errors.fechasalida !== undefined &&
+              formik.errors.fechasalida  &&
               formik.touched.fechasalida
             }
             value={formik.values.fechasalida}
@@ -308,40 +311,52 @@ export const BookingsPage = () => {
             variant="outlined"
           />
         </Box>
-        <FormControl fullWidth>
-          <InputLabel>Habitacion Id</InputLabel>
-          <Select
-            value={formik.values.habitacionid}
-            label="Habitacion Id"
-            name="habitacionid"
-            onChange={formik.handleChange}
-            defaultValue={1}
-            error={formik.errors.habitacionid !== undefined}
-          >
-            {rooms.map((r) => (
-              <MenuItem key={r} value={r}>
-                {r}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          <InputLabel>Persona</InputLabel>
-          <Select
-            value={formik.values.personaid}
-            label="Persona"
-            name="personaid"
-            onChange={formik.handleChange}
-            defaultValue={1}
-            error={formik.errors.personaid !== undefined}
-          >
-            {people.map((p) => (
-              <MenuItem key={p.id} value={p.id}>
-                {p.nombrecompleto}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Box>
+          <FormControl fullWidth>
+            <InputLabel>Habitacion Id</InputLabel>
+            <Select
+              value={formik.values.habitacionid}
+              label="Habitacion Id"
+              name="habitacionid"
+              onChange={formik.handleChange}
+              error={formik.errors.habitacionid && formik.touched.habitacionid}
+            >
+              {rooms.map((r) => (
+                <MenuItem key={r} value={r}>
+                  {r}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {(formik.errors.habitacionid && formik.touched.habitacionid) && (
+            <Typography variant="caption" color="#d32f2f" ml={pxToRem(12)} mt={pxToRem(3)}>
+              {formik.errors.habitacionid}
+            </Typography>
+          )}
+        </Box>
+        <Box>
+          <FormControl fullWidth>
+            <InputLabel>Persona</InputLabel>
+            <Select
+              value={formik.values.personaid}
+              label="Persona"
+              name="personaid"
+              onChange={formik.handleChange}
+              error={formik.errors.personaid && formik.touched.personaid}
+            >
+              {people.map((p) => (
+                <MenuItem key={p.id} value={p.id}>
+                  {p.nombrecompleto}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {formik.errors.personaid && formik.touched.personaid && (
+            <Typography variant="caption" color="#d32f2f" ml={pxToRem(12)} mt={pxToRem(3)}>
+              {formik.errors.personaid}
+            </Typography>
+          )}
+        </Box>
         {showApologizeMessage && (
           <Typography variant="button">
             Lo sentimos, no contamos con habitaciones disponibles en las fechas

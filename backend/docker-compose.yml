@@ -4,7 +4,7 @@ services:
       image: mysql
       platform: linux/x86_64
       environment:
-          - MYSQL_DATABASE=my_store
+          - MYSQL_DATABASE=reservas
           - MYSQL_USER=
           - MYSQL_ROOT_PASSWORD=admin123
           - MYSQL_PORT=3306
